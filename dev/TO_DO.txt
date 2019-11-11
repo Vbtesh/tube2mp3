@@ -1,0 +1,7 @@
+1. Make sure input files are recognised
+2. Check silence in vicinity of timestamp to make sure they are correct
+3. Use pydub for all metadata
+4. Push on GitHub
+
+5. Finish Django Tutorial 
+
