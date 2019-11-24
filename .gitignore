@@ -1,5 +1,9 @@
 .vscode/
 
+dev/*.ipynb
+
+dev_old/*
+
 videos/*
 !videos/.gitkeep
 
