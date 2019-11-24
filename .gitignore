@@ -1,5 +1,7 @@
 .vscode/
 
+.ipynb_checkpoints/*
+
 dev/*.ipynb
 
 dev_old/*
