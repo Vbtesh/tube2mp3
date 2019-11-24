@@ -1,13 +1,71 @@
 import re
-
+from pytube import YouTube
 
 # Parsers utility functions
+def read_urls(text_file):
+    with open(".\\inputs\\" + text_file, "r") as file:
+        contents = file.read().split("\n")
+
+    validation = []
+    metadata = {}
+    album = False
+    track_number = 1
+    for line in contents:
+        if line[:5] == "album":
+            album_line = line.split(">")
+            if album_line[0].split(":")[1].strip() == "True":
+                album = True
+
+                album_md = album_line[1].strip().split(";;")
+                # Check if template values have changed, if yes, add metadata
+                if album_md[0] != "album":
+                    metadata["album"] = album_md[0]
+                if album_md[1] != "artist":
+                    metadata["artist"] = album_md[1]
+                if album_md[1] != "year":
+                    metadata["date"] = album_md[2]
+
+        elif line[:4] == "http":
+            s_line = line.split(";;")
+
+            # Check if template values have changed, if yes, add metadata
+            song_metadata = {}
+            if album:
+                song_metadata["tracknumber"] = str(track_number)
+                track_number += 1
+                for k in metadata:
+                    song_metadata[k] = metadata[k]
+                song_metadata["title"] = s_line[2]
+                if "artist" not in song_metadata.keys():
+                    song_metadata["artist"] = s_line[4]
+            else:
+                if s_line[1] != "track_number":
+                    song_metadata["tracknumber"] = s_line[1]
+                if s_line[2] != "title":
+                    song_metadata["title"] = s_line[2]
+                if s_line[3] != "album":
+                    song_metadata["album"] = s_line[3]
+                if s_line[4] != "artist":
+                    song_metadata["artist"] = s_line[4]
+                if s_line[5] != "year":
+                    song_metadata["date"] = s_line[5]
+
+            if song_metadata:
+                validation.append([YouTube(s_line[0]), s_line[0], song_metadata])
+            else:
+                validation.append([YouTube(s_line[0]), s_line[0], None])
+
+            print(f"Added {validation[-1][0].title}.")
+
+    return validation
+
+
 def read_tracklist(text_file):
     with open(".\\inputs\\" + text_file, "r") as file:
         contents = file.read().split("\n")
     metadata = []
     for line in contents:
-        s_line = line.split(";")
+        s_line = line.split(";;")
         metadata.append(s_line[0], ts_decompose(s_line[1]), s_line[2])
     return metadata
 

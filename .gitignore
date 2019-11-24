@@ -1,3 +1,10 @@
-videos/
-audios/
 .vscode/
+
+videos/*
+!videos/.gitkeep
+
+audios/*
+!audios/.gitkeep
+
+inputs/*
+!inputs/in_template.txt

@@ -1,0 +1,14 @@
+PLEASE READ THE FOLLOWING:
+
+If the list is not an album, the application will attempt to parse missing metadata fields.
+
+If the url list is an album, enter metadata below and replace "False" by "True". 
+No need to repeat metadata through the list. If artist has various artists, leave "artist" field unchanged in album and amend throught the url list.
+Track number will be inferred from order. 
+The parser will only look at the title and artist (in case of album with numerous artists) fields.
+
+ALBUM METADATA HERE:
+album:False > album;;artist;;year
+
+URL LIST HERE:
+url;;track_number;;title;;album;;artist;;year
