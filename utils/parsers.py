@@ -149,6 +149,7 @@ def parse_title(title, album):
     flags_tag = ["[", "("]
     flags_title = ["-", "–", "|"]
     tracknum_format = ["[ABCDEFGH][0-9]", "[0-9][0-9]\.", "[0-9][0-9]\ ", "[0-9]\.", "[0-9]\ "]
+    tracknum = None
 
     # Search for a track number in the new line
     for f in tracknum_format:
