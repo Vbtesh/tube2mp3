@@ -25,7 +25,6 @@ while True:
     
     validation = []
 
-
     if payload[:8] == "https://":
         
         if "=PL" in payload:
@@ -43,12 +42,41 @@ while True:
                     continue
             else:
                 try:
-                    validation.append([Playlist(payload), payload, None])
-                    print("Got it, proceeding with one video...\n")
+                    playlist_url = Playlist(payload)
+                    playlist_url.populate_video_urls()
+                except:
+                    print("Invalid url or couldn't connect to server, check connection and try again. If this message persist, check input.\n")
+                    continue
+
+                print("Is the playlist an album?")
+                check = input("\n [y]/[Enter]    [n] ==> ")
+
+                if check == "y" or check == "yes" or check == "":
+                    album = True
+                    metadata = parse_title(playlist_url.title(), True)
+                else:
+                    metadata = None
+
+                try:
+                    track_number = 1
+                    for url in playlist_url.video_urls:
+                        url_yt = YouTube(url)
+                        song_metadata = {}
+
+                        if album:
+                            for k in metadata:
+                                song_metadata[k] = metadata[k]
+                            song_metadata["tracknumber"] = str(track_number)
+                            track_number += 1
+                        
+                        validation.append([url_yt, url, song_metadata])
+
+                    print(f"Proceeding with {len(validation)} video...\n")
                     break
                 except:
                     print("Invalid url or couldn't connect to server, check connection and try again. If this message persist, check input.\n")
                     continue
+ 
         else:
             try:
                 validation.append([YouTube(payload), payload, None])
@@ -149,6 +177,7 @@ for tune in validation:
 
         parsed_metadata = parse_title(tune[0].title, False)
 
+        # For inputs files
         if "title" not in metadata.keys():
             metadata["title"] = parsed_metadata["title"]
         if "artist" not in metadata.keys():
@@ -156,6 +185,16 @@ for tune in validation:
         if "album" not in metadata.keys():
             metadata["album"] = parsed_metadata["album"]
         if "date" not in metadata.keys():
+            metadata["date"] = parsed_metadata["date"]
+
+        # For playlist
+        if not metadata["title"]:
+            metadata["title"] = parsed_metadata["title"]
+        if not metadata["artist"]:
+            metadata["artist"] = parsed_metadata["artist"]
+        if not metadata["album"]:
+            metadata["album"] = parsed_metadata["album"]
+        if not metadata["date"]:
             metadata["date"] = parsed_metadata["date"]
 
         print("Parsed metadata is as follows:")
@@ -239,7 +278,7 @@ for tube in download:
                 file[k] = metadata[k]
         file.save()
         print("Done.")
-        
+
         track_number += 1
 
     elif len(tube) == 3 and not track_list_album:

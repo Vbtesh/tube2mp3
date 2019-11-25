@@ -144,21 +144,38 @@ def parse_title(title, album):
     artist = None
     date = None
     tags = None
+    tracknumber = None
     final_title = None
     flags_tag = ["[", "("]
     flags_title = ["-", "–", "|"]
+    tracknum_format = ["[ABCDEFGH][0-9]", "[0-9][0-9]\.", "[0-9][0-9]\ ", "[0-9]\.", "[0-9]\ "]
 
+    # Search for a track number in the new line
+    for f in tracknum_format:
+        search = re.search(f, title)
+        if search:
+            #print(f)
+            tracknum = search
+            break
+    
+    if tracknum:
+        span = tracknum.span()
+        tags_title = title[:span[0]] + title[span[1]:]
+        tracknumber = title[span[0]:span[1]].strip()
+    else:
+        tags_title = title
+    
     tags = []
     for flag in flags_tag:
-        temp_tags = extract_string(title, flag)
+        temp_tags = extract_string(tags_title, flag)
         if temp_tags:
             tags += temp_tags
 
     # Generate new title by removing tags from original string
-    n_title = title
-    for c in title:
+    n_title = tags_title
+    for c in tags_title:
         if c in flags_tag:
-            n_title = title[:title.index(c)]
+            n_title = tags_title[:tags_title.index(c)]
             break
     
     # Extract date from tags
@@ -190,12 +207,14 @@ def parse_title(title, album):
     else:
         new_title = n_title
 
+    
     # Generate artist and clean title
     for tag in flags_title:
         temp_title = new_title.split(tag)
         if len(temp_title) > 1:
             artist = temp_title[0].strip()
             final_title = temp_title[1].strip()
+
     
     # Return final values
     metadata = {
@@ -203,7 +222,7 @@ def parse_title(title, album):
         "title" : final_title,
         "album" : None,
         "date" : date,
-        "tracknumber": None,
+        "tracknumber": tracknumber,
         "tags" : tags
     }
     if album:
