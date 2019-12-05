@@ -1,6 +1,10 @@
 # tube2mp3
 YouTube converter command line app. Aimed at music video. It attempts to parse the title and the description for metadata
 
+This project has been used to illustrate the concept of perceptual animacy in geometric shape in the case of chasing behaviour
+Link: https://youtu.be/C5QNalIDDqo
+
+
 Features:
 
 - Take in one (in command-line) or multiple urls (user the prescribed .txt format)
